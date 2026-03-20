@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAIYA — Option 1: Faithful</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:     #050812;
+  --s1:     #080e1e;
+  --s2:     #0d1830;
+  --s3:     #101c34;
+  --bd:     #1e4a8c;
+  --bdg:    #2563eb;
+  --or:     #f97316;
+  --cy:     #22d3ee;
+  --gr:     #22c55e;
+  --t1:     #e2e8f0;
+  --t2:     #94a3b8;
+  --t3:     #64748b;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ─── TICKER ─── */
+.ticker-wrap {
+  background: linear-gradient(90deg, #1a0500, #200a00, #1a0500);
+  border-bottom: 1px solid #7c3b0e;
+  padding: 7px 0; overflow: hidden;
+}
+.ticker-track {
+  display: inline-flex; white-space: nowrap;
+  animation: tick 28s linear infinite;
+}
+@keyframes tick { to { transform: translateX(-50%); } }
+.ti {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 0 20px;
+  font-family: 'Share Tech Mono', monospace; font-size: 12px;
+  border-right: 1px solid #7c3b0e;
+}
+.fi { color: #ff6b00; animation: fl .9s ease-in-out infinite alternate; }
+@keyframes fl { to { opacity: .65; } }
+.tv { color: #f97316; font-weight: 700; }
+.vc { color: #ffaa00; font-weight: 700; }
+.dm { color: #22d3ee; }
+
+/* ─── NAV ─── */
+nav {
+  background: var(--s1);
+  border-bottom: 1px solid var(--bd);
+  display: flex; align-items: center; flex-wrap: wrap;
+  padding: 10px 16px; gap: 8px;
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(15px, 2vw, 20px);
+  font-weight: 900; color: #fff; letter-spacing: 2px; white-space: nowrap;
+}
+.nav-links { display: flex; gap: 0; }
+.nl {
+  padding: 6px clamp(10px, 1.5vw, 22px);
+  font-size: clamp(12px, 1.2vw, 14px); font-weight: 600;
+  color: var(--t2); cursor: pointer;
+  border-bottom: 2px solid transparent; transition: color .2s;
+  white-space: nowrap;
+}
+.nl:hover { color: #fff; }
+.nl.active { color: #fff; border-bottom-color: var(--or); }
+.nav-r { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.uav {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 2px solid var(--bdg);
+  background: linear-gradient(135deg, #f97316, #1e40af);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.uname { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--t1); line-height: 1.2; }
+.uaddr { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--t3); }
+.btn-cn {
+  background: transparent; border: 1.5px solid var(--bdg);
+  color: #60a5fa; padding: 7px 14px;
+  font-family: 'Rajdhani', sans-serif; font-size: 12px;
+  font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer; border-radius: 2px; transition: all .2s; white-space: nowrap;
+}
+.btn-cn:hover { background: var(--bdg); color: #fff; }
+
+/* ─── LAYOUT ─── */
+main { padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; }
+
+/* ─── CARD ─── */
+.card {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 4px;
+  padding: 14px;
+  position: relative; overflow: hidden;
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bdg), transparent); opacity: .5;
+}
+.ct {
+  font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--t2);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
+}
+
+/* ─── ROW 1: stat cards in a responsive grid ─── */
+/* On narrow screens: 2 col. On wide: 4 col. */
+.row1 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (min-width: 900px) {
+  .row1 {
+    /* tracker fixed, burn/swap flex, token-swap fixed */
+    grid-template-columns: 180px 1fr 1fr 240px;
+  }
+}
+
+/* ─── BURN TRACKER ─── */
+.tracker-body { display: flex; flex-direction: column; align-items: center; }
+.gauge-sub { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--t3); letter-spacing: 1px; text-align: center; margin-top: 6px; }
+.btn-join {
+  width: 100%; margin-top: 14px;
+  background: linear-gradient(90deg, #ea580c, #f97316);
+  border: none; color: #fff; padding: 9px;
+  font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; border-radius: 2px; transition: all .2s;
+}
+.btn-join:hover { box-shadow: 0 0 18px rgba(249,115,22,.5); }
+
+/* ─── STAT ROWS ─── */
+.big { font-family: 'Orbitron', monospace; font-size: clamp(16px, 2.2vw, 24px); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 2px; }
+.big-s { font-size: 12px; color: var(--t2); margin-bottom: 2px; }
+.big-c { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--t3); margin-bottom: 10px; }
+.sr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 10px; background: var(--s3);
+  border: 1px solid var(--bd); border-left: 2px solid var(--or);
+  border-radius: 2px; margin-bottom: 5px; gap: 8px;
+}
+.sr.cy { border-left-color: var(--cy); }
+.sk { display: flex; flex-direction: column; gap: 1px; }
+.sk-l { font-size: 13px; color: var(--t1); font-weight: 600; line-height: 1.2; }
+.sk-s { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--t3); }
+.sv { font-family: 'Share Tech Mono', monospace; font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; flex-shrink: 0; }
+.sv-or { color: var(--or); }
+.sv-cy { color: var(--cy); }
+
+/* mini chart */
+.mc { width: 100%; height: 46px; margin-bottom: 10px; display: block; }
+
+/* TOKEN SWAP */
+.ts-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.ts-fl { font-size: 11px; color: var(--t3); margin-bottom: 5px; display: flex; justify-content: space-between; }
+.ts-row {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--s3); border: 1px solid var(--bd);
+  border-radius: 2px; padding: 8px 10px; margin-bottom: 4px;
+}
+.tico { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.te { background: linear-gradient(135deg, #627eea, #3b82f6); }
+.tn { background: linear-gradient(135deg, #f97316, #ea580c); }
+.tnm { font-family: 'Share Tech Mono', monospace; font-size: 13px; font-weight: 700; flex: 1; }
+.ts-ar { text-align: center; color: var(--cy); font-size: 15px; padding: 3px 0; }
+.ts-in {
+  width: 100%; background: var(--s3); border: 1px solid var(--bd);
+  border-radius: 2px; padding: 8px 10px;
+  color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 13px;
+  margin-bottom: 10px; outline: none; transition: border-color .2s;
+}
+.ts-in:focus { border-color: var(--bdg); }
+.ts-in::placeholder { color: var(--t3); }
+.btn-sw {
+  width: 100%; background: linear-gradient(90deg, #1d4ed8, #2563eb);
+  border: none; color: #fff; padding: 11px;
+  font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; border-radius: 2px; transition: all .2s;
+}
+.btn-sw:hover { box-shadow: 0 0 18px rgba(37,99,235,.5); }
+
+/* ─── ROW 2 ─── */
+.row2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 700px) { .row2 { grid-template-columns: 1fr 1fr; } }
+
+/* PARTNER BURN */
+.pgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.pc {
+  background: var(--s3); border: 1px solid var(--bd);
+  border-radius: 3px; padding: 10px; text-align: center;
+}
+.pc.live { border-color: var(--or); box-shadow: 0 0 10px rgba(249,115,22,.2); }
+.pc.come { border-color: var(--cy); }
+.pc-n { font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+.pc-n.o { color: var(--or); }
+.pc-n.c { color: var(--cy); }
+.pc-am { font-family: 'Orbitron', monospace; font-size: clamp(13px,1.6vw,17px); font-weight: 900; color: #fff; margin-bottom: 3px; }
+.pc-bd {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  padding: 2px 6px; border-radius: 2px; margin-bottom: 7px;
+  letter-spacing: .5px; text-transform: uppercase;
+}
+.bd-l { background: linear-gradient(90deg, #dc2626, #ef4444); color: #fff; }
+.bd-u { background: var(--s3); border: 1px solid var(--cy); color: var(--cy); }
+.bd-s { background: var(--s3); border: 1px solid var(--bd); color: var(--t3); }
+.pfi { font-size: clamp(22px, 3vw, 32px); display: block; margin: 6px auto; filter: drop-shadow(0 0 6px rgba(249,115,22,.5)); }
+.pfi.d { filter: none; opacity: .4; }
+.btn-pj {
+  width: 100%; background: linear-gradient(90deg, #ea580c, #f97316);
+  border: none; color: #fff; padding: 5px;
+  font-family: 'Orbitron', monospace; font-size: 9px; letter-spacing: 1px;
+  text-transform: uppercase; cursor: pointer; border-radius: 2px; margin-top: 4px;
+}
+
+/* SWAPPERS */
+.sgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sc {
+  background: var(--s3); border: 1px solid var(--bd);
+  border-radius: 3px; padding: 10px; text-align: center;
+}
+.rk {
+  display: inline-flex; width: 20px; height: 20px; border-radius: 50%;
+  align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; margin-bottom: 6px;
+}
+.r1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; }
+.r2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: #fff; }
+.r3 { background: linear-gradient(135deg, #f97316, #b45309); color: #fff; }
+.r4 { background: var(--s3); color: var(--t3); border: 1px solid var(--bd); }
+.sav {
+  width: clamp(34px, 4vw, 44px); height: clamp(34px, 4vw, 44px);
+  border-radius: 3px; background: var(--s2); border: 1px solid var(--bd);
+  margin: 3px auto 5px; display: flex; align-items: center; justify-content: center;
+  font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--t3);
+}
+.snm { font-size: 12px; color: #fff; font-weight: 600; margin-bottom: 4px; }
+.spr { display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--t3); }
+.stk { width: 13px; height: 13px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 6px; font-weight: 700; }
+
+/* ─── ACTIVITY ─── */
+.ah { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.lv { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--gr); }
+.ld { width: 6px; height: 6px; border-radius: 50%; background: var(--gr); animation: lp 1.5s ease-in-out infinite; }
+@keyframes lp { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,.6); } 50% { box-shadow: 0 0 0 5px rgba(34,197,94,0); } }
+.agr { display: grid; grid-template-columns: 1fr; gap: 6px; }
+@media (min-width: 700px) { .agr { grid-template-columns: 1fr 1fr; } }
+.ai {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 10px; background: var(--s3);
+  border: 1px solid var(--bd); border-radius: 2px; min-width: 0;
+}
+.ado { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.do { background: var(--or); }
+.db { background: #3b82f6; }
+.au { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--t2); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.au span { color: var(--t3); }
+.at { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--t3); flex-shrink: 0; }
+.aa { font-family: 'Share Tech Mono', monospace; font-size: 11px; font-weight: 700; margin-left: auto; white-space: nowrap; flex-shrink: 0; }
+.ao { color: var(--or); }
+.ac { color: var(--cy); }
+.ci { width: 13px; height: 13px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 6px; font-weight: 700; flex-shrink: 0; }
+.cb { background: linear-gradient(135deg, #f7931a, #e88a12); }
+.cu { background: linear-gradient(135deg, #26a17b, #1a8c69); }
+
+/* ─── PAIRS ─── */
+.prs { display: flex; flex-direction: column; gap: 8px; }
+.pr { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media (min-width: 600px) { .pr { grid-template-columns: repeat(3, 1fr); } }
+.pc2 {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--s3); border: 1px solid var(--bd);
+  border-radius: 3px; padding: 9px 12px; min-width: 0;
+}
+.pii { display: flex; flex-shrink: 0; }
+.pi1, .pi2 { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+.pi2 { margin-left: -7px; border: 2px solid var(--s2); }
+.pinf { flex: 1; min-width: 0; }
+.pnm { font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.pup { color: var(--gr); font-size: 10px; }
+.ppr { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--t3); margin-top: 1px; }
+.btn-tr {
+  background: linear-gradient(90deg, #1d4ed8, #2563eb);
+  border: none; color: #fff; padding: 6px 10px;
+  font-family: 'Orbitron', monospace; font-size: 9px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer; border-radius: 2px; white-space: nowrap; flex-shrink: 0; transition: all .2s;
+}
+.btn-tr:hover { box-shadow: 0 0 12px rgba(37,99,235,.5); }
+
+/* ─── TOKENS BAR ─── */
+.tkbar {
+  background: var(--s2); border: 1px solid var(--bd);
+  border-radius: 4px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.tlic { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, #f97316, #ea580c); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.tltx { font-family: 'Orbitron', monospace; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; color: #fff; line-height: 1.3; white-space: nowrap; }
+.tkls { display: flex; gap: 6px; flex: 1; overflow: hidden; align-items: center; }
+.tch {
+  width: clamp(26px, 3vw, 34px); height: clamp(26px, 3vw, 34px);
+  border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700;
+  cursor: pointer; border: 1.5px solid var(--bd); transition: transform .2s;
+}
+.tch:hover { transform: scale(1.1); }
+.tna { background: var(--s3); border: 1px solid var(--bd); color: var(--t2); padding: 3px 9px; cursor: pointer; font-size: 14px; border-radius: 2px; flex-shrink: 0; }
+
+/* ─── TXN TABLE ─── */
+.txwrap { overflow-x: auto; }
+.txn {
+  width: 100%; border-collapse: collapse;
+  font-family: 'Share Tech Mono', monospace; font-size: 11px;
+  min-width: 700px;
+}
+.txn th { color: var(--t3); padding: 7px 9px; text-align: left; border-bottom: 1px solid var(--bd); font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
+.txn td { padding: 7px 9px; border-bottom: 1px solid rgba(30,74,140,.3); }
+.txn tr:last-child td { border-bottom: none; }
+.txn tr:hover td { background: rgba(30,74,140,.12); }
+.xh { color: #3b82f6; cursor: pointer; }
+.xh:hover { color: var(--cy); }
+.xt { color: var(--t3); }
+.xy { color: var(--t1); }
+.xv { color: #fff; text-align: right; font-weight: 700; }
+.xf { color: var(--t3); text-align: right; }
+
+/* ═══════════════════════════════════════
+   INNER GLOW SYSTEM — matches reference
+   All glow = inset box-shadow lan từ viền vào trong card
+═══════════════════════════════════════ */
+
+/* BASE CARD — inner blue glow mặc định */
+.card {
+  box-shadow:
+    inset 0 0 30px rgba(30, 74, 140, 0.25),
+    inset 0 0  8px rgba(37, 99, 235, 0.12);
+  transition: box-shadow .3s;
+}
+
+/* BURN INNER GLOW — cam/đỏ rực từ viền vào trong, như ảnh gốc */
+.card.glow-burn {
+  border-color: #7c3b0e;
+  box-shadow:
+    inset 0   0  60px rgba(180,  60,  0, 0.35),
+    inset 0   0  20px rgba(249, 115, 22, 0.25),
+    inset 0  -2px 40px rgba(249, 115, 22, 0.15);
+}
+
+/* SWAP INNER GLOW — cyan/blue từ viền vào trong */
+.card.glow-swap {
+  border-color: #1e4a8c;
+  box-shadow:
+    inset 0 0 60px rgba( 14,  74, 160, 0.35),
+    inset 0 0 20px rgba( 37,  99, 235, 0.20),
+    inset 0 0 10px rgba( 34, 211, 238, 0.10);
+}
+
+/* TOKEN SWAP panel — blue glow nhẹ */
+.card.glow-accent {
+  border-color: #1e4a8c;
+  box-shadow:
+    inset 0 0 50px rgba(37,  99, 235, 0.25),
+    inset 0 0 15px rgba(34, 211, 238, 0.12);
+}
+
+/* BURN TRACKER card — pulse orange inner glow */
+.card.glow-burn.pulse-live {
+  animation: burnInnerPulse 2.8s ease-in-out infinite;
+}
+@keyframes burnInnerPulse {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 60px rgba(180, 60,  0, 0.30),
+      inset 0 0 20px rgba(249,115, 22, 0.20);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 80px rgba(200, 70,  0, 0.50),
+      inset 0 0 30px rgba(249,115, 22, 0.35),
+      inset 0 0 10px rgba(255,180,  0, 0.20);
+  }
+}
+
+/* PARTNER BURN — inner glow cam đậm theo ảnh */
+.card.glow-burn-section {
+  border-color: #7c3b0e;
+  box-shadow:
+    inset 0 0 80px rgba(160, 50,  0, 0.45),
+    inset 0 0 30px rgba(249,115, 22, 0.25),
+    inset 0 0  8px rgba(255,160,  0, 0.15);
+}
+
+/* BURN ACTIVITY — inner cam nhạt hơn */
+.card.glow-burn-activity {
+  border-color: rgba(124,59,14,.7);
+  box-shadow:
+    inset 0 0 60px rgba(160, 50,  0, 0.30),
+    inset 0 0 20px rgba(249,115, 22, 0.18);
+}
+
+/* SWAP ACTIVITY / TOP PAIRS / TOKENS / TXN — inner blue nhẹ */
+.card.glow-blue {
+  border-color: rgba(30,74,140,.8);
+  box-shadow:
+    inset 0 0 50px rgba(14, 50, 140, 0.30),
+    inset 0 0 15px rgba(37, 99, 235, 0.15);
+}
+
+/* Tokens bar inner glow tím */
+.tkbar {
+  box-shadow:
+    inset 0 0 40px rgba(30, 20, 100, 0.30),
+    inset 0 0 12px rgba(99,102, 241, 0.15);
+  border-color: rgba(99,102,241,.35);
+}
+
+/* ── Partner live card inner glow */
+.pc.live {
+  box-shadow:
+    inset 0 0 30px rgba(180, 60,  0, 0.50),
+    inset 0 0 10px rgba(249,115, 22, 0.35);
+  animation: pcInnerLive 2.5s ease-in-out infinite;
+}
+@keyframes pcInnerLive {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 24px rgba(180, 60, 0, 0.40),
+      inset 0 0  8px rgba(249,115,22, 0.28);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 40px rgba(200, 70, 0, 0.65),
+      inset 0 0 14px rgba(249,115,22, 0.45);
+  }
+}
+.pc.come {
+  box-shadow:
+    inset 0 0 24px rgba(14, 74,140, 0.35),
+    inset 0 0  8px rgba(34,211,238, 0.20);
+}
+
+/* ── Text glows — số lớn sáng lên */
+.big.or-glow {
+  text-shadow:
+    0 0 20px rgba(249,115, 22, 0.9),
+    0 0 40px rgba(249,115, 22, 0.5),
+    0 0 60px rgba(249, 80,  0, 0.3);
+}
+.big.cy-glow {
+  text-shadow:
+    0 0 20px rgba( 34,211,238, 0.9),
+    0 0 40px rgba( 34,211,238, 0.5),
+    0 0 60px rgba(  0,180,220, 0.3);
+}
+.sv-or { text-shadow: 0 0 10px rgba(249,115, 22, 0.8); }
+.sv-cy { text-shadow: 0 0 10px rgba( 34,211,238, 0.8); }
+
+/* ── Button glows */
+.btn-join {
+  box-shadow: 0 0 18px rgba(249,115,22,.5), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.btn-join:hover {
+  box-shadow: 0 0 32px rgba(249,115,22,.8), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.btn-sw {
+  box-shadow: 0 0 18px rgba(37,99,235,.5), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.btn-sw:hover {
+  box-shadow: 0 0 32px rgba(37,99,235,.85), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.btn-tr { box-shadow: 0 0 10px rgba(37,99,235,.35); }
+.btn-tr:hover { box-shadow: 0 0 22px rgba(37,99,235,.75); }
+.btn-cn:hover { box-shadow: 0 0 20px rgba(37,99,235,.6); }
+.btn-pj { box-shadow: 0 0 10px rgba(249,115,22,.35); }
+.btn-pj:hover { box-shadow: 0 0 22px rgba(249,115,22,.75); }
+
+/* ── Gauge needle SVG glow */
+.gauge-needle { filter: drop-shadow(0 0 3px #f97316) drop-shadow(0 0 7px rgba(249,115,22,.7)); }
+
+/* ── Chart glow */
+.chart-line { filter: drop-shadow(0 0 3px rgba(34,211,238,.8)); }
+
+/* ── Fire emoji glow */
+.pfi {
+  filter: drop-shadow(0 0 6px rgba(249,115,22,.9)) drop-shadow(0 0 14px rgba(249,115,22,.5));
+}
+.pfi.d { filter: none; opacity: .35; }
+
+/* ── Live dot */
+.ld { box-shadow: 0 0 7px rgba(34,197,94,.9); }
+
+/* ── Rank #1 gold glow */
+.rk.r1 { box-shadow: 0 0 12px rgba(251,191,36,.7); }
+
+/* ── User avatar */
+.uav { box-shadow: 0 0 10px rgba(37,99,235,.55); }
+
+/* ── Token chips */
+.tch:hover { transform: scale(1.12); box-shadow: 0 0 14px rgba(255,255,255,.3); }
+
+/* ── Nav */
+nav { box-shadow: 0 1px 0 rgba(37,99,235,.25), 0 4px 20px rgba(0,0,0,.5); }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bd); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <div class="ti"><span class="fi">🔥</span>Burn <span class="tv">1,250 FAIYA</span></div>
+    <div class="ti"><span class="dm">◇</span>Swap <span class="tv">3.5 ETH → 17,800 FAIYA</span></div>
+    <div class="ti">Vol 24h <span class="vc">$420,300</span></div>
+    <div class="ti"><span class="fi">🔥</span>Burn <span class="tv">800 FAIYA</span></div>
+    <div class="ti"><span class="dm">◇</span>Swap <span class="tv">1.2 BTC → 42,100 NEOX</span></div>
+    <div class="ti">Top Pool <span class="vc">ETH/NEOX $2.1M</span></div>
+    <div class="ti"><span class="fi">🔥</span>Burn <span class="tv">1,250 FAIYA</span></div>
+    <div class="ti"><span class="dm">◇</span>Swap <span class="tv">3.5 ETH → 17,800 FAIYA</span></div>
+    <div class="ti">Vol 24h <span class="vc">$420,300</span></div>
+    <div class="ti"><span class="fi">🔥</span>Burn <span class="tv">800 FAIYA</span></div>
+    <div class="ti"><span class="dm">◇</span>Swap <span class="tv">1.2 BTC → 42,100 NEOX</span></div>
+    <div class="ti">Top Pool <span class="vc">ETH/NEOX $2.1M</span></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Dashboard</div>
+  <div class="nav-links">
+    <div class="nl active">Dashboard</div>
+    <div class="nl">Pairs</div>
+    <div class="nl">Burn</div>
+    <div class="nl">Swap</div>
+  </div>
+  <div class="nav-r">
+    <div style="display:flex;align-items:center;gap:7px">
+      <div class="uav">U1</div>
+      <div><div class="uname">User001</div><div class="uaddr">0x1a2…3c</div></div>
+    </div>
+    <button class="btn-cn">Connect Wallet</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ROW 1 -->
+  <div class="row1">
+
+    <!-- Burn Tracker -->
+    <div class="card glow-burn pulse-live" style="display:flex;flex-direction:column">
+      <div class="ct">🔥 Burn Tracker</div>
+      <div class="tracker-body">
+        <svg viewBox="0 0 160 96" style="width:100%;max-width:160px;display:block">
+          <defs>
+            <linearGradient id="gg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#7c3b0e"/>
+              <stop offset="100%" stop-color="#ff6b00"/>
+            </linearGradient>
+          </defs>
+          <path d="M18 82 A58 58 0 0 1 142 82" fill="none" stroke="#101c34" stroke-width="12" stroke-linecap="round"/>
+          <path d="M18 82 A58 58 0 0 1 142 82" fill="none" stroke="url(#gg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="182" stroke-dashoffset="44"/>
+          <line x1="80" y1="80" x2="124" y2="38" stroke="#f97316" stroke-width="2" stroke-linecap="round" filter="url(#gf)"/>
+          <circle cx="80" cy="80" r="5" fill="#f97316" filter="url(#gf)"/>
+          <circle cx="80" cy="80" r="2" fill="#050812"/>
+          <defs>
+            <filter id="gf" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="2" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <text x="8"   y="92" fill="#64748b" font-size="9" font-family="monospace">0</text>
+          <text x="70"  y="16" fill="#64748b" font-size="9" font-family="monospace">50</text>
+          <text x="136" y="92" fill="#64748b" font-size="9" font-family="monospace">100</text>
+        </svg>
+        <div class="gauge-sub">BURN RATE MONITOR</div>
+      </div>
+      <button class="btn-join">JOIN</button>
+    </div>
+
+    <!-- Burn Protocol -->
+    <div class="card glow-burn">
+      <div class="ct">🔥 BURN 🔥</div>
+      <div class="big or-glow">5,678,901 NEOX</div>
+      <div class="big-s">Total Burned</div>
+      <div class="big-c">Tokens permanently removed from supply</div>
+      <div class="sr"><div class="sk"><span class="sk-l">Total Transactions</span><span class="sk-s">Total Burned</span></div><span class="sv">1,921</span></div>
+      <div class="sr"><div class="sk"><span class="sk-l">Total Pools</span><span class="sk-s">Total Participants</span></div><span class="sv">42</span></div>
+      <div class="sr"><div class="sk"><span class="sk-l">Burn Volume</span><span class="sk-s">Total Burned</span></div><span class="sv sv-or">$2,145,678</span></div>
+    </div>
+
+    <!-- Swap Protocol -->
+    <div class="card glow-swap">
+      <div class="ct">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+        SWAP
+      </div>
+      <div class="big cy-glow">$12,345,678</div>
+      <div class="big-s">Total Swap Volume</div>
+      <div class="big-c">Across all swap pools</div>
+      <svg class="mc" viewBox="0 0 300 46" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22d3ee" stop-opacity=".3"/><stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/></linearGradient>
+          <filter id="cf"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <path d="M0 44 L50 36 L100 28 L150 18 L190 22 L230 10 L270 5 L300 2" fill="none" stroke="#22d3ee" stroke-width="1.8" filter="url(#cf)"/>
+        <path d="M0 44 L50 36 L100 28 L150 18 L190 22 L230 10 L270 5 L300 2 L300 46 L0 46Z" fill="url(#cg)"/>
+        <circle cx="300" cy="2" r="3" fill="#22d3ee" filter="url(#cf)"/>
+      </svg>
+      <div class="sr cy"><div class="sk"><span class="sk-l">Total Transactions</span><span class="sk-s">Total Pools</span></div><span class="sv">8,420</span></div>
+      <div class="sr cy"><div class="sk"><span class="sk-l">Total Pools</span><span class="sk-s">Active Traders</span></div><span class="sv">36</span></div>
+      <div class="sr cy"><div class="sk"><span class="sk-l">Swap Fees</span><span class="sk-s">Swap Fees</span></div><span class="sv sv-cy">$12,450</span></div>
+    </div>
+
+    <!-- Token Swap -->
+    <div class="card glow-accent">
+      <div class="ts-hdr">
+        <div class="ct" style="margin-bottom:0">TOKEN SWAP</div>
+        <span style="color:var(--t3);cursor:pointer">⚙</span>
+      </div>
+      <div class="ts-fl"><span>From</span><span>⇅</span></div>
+      <div class="ts-row">
+        <div class="tico te">Ξ</div>
+        <div class="tnm">ETH</div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--t3)">× NEOX</span>
+      </div>
+      <div class="ts-ar">⇅</div>
+      <div class="ts-fl"><span>Amount</span></div>
+      <input class="ts-in" type="text" placeholder="× NEOX">
+      <button class="btn-sw">SWAP</button>
+    </div>
+
+  </div><!-- /row1 -->
+
+  <!-- ROW 2 -->
+  <div class="row2">
+
+    <div class="card glow-burn">
+      <div class="ct">🔥 PARTNER BURN</div>
+      <div class="pgrid">
+        <div class="pc live"><div class="pc-n o">YUNANa</div><div class="pc-am">1,250,000</div><div class="pc-bd bd-l">Live 482514</div><span class="pfi">🔥</span><button class="btn-pj">JOIN</button></div>
+        <div class="pc come"><div class="pc-n c">HAHA</div><div class="pc-am" style="font-size:13px;color:var(--cy)">Upcoming</div><div class="pc-bd bd-u">3 days</div><span class="pfi d">🔥</span></div>
+        <div class="pc"><span class="pfi" style="margin-top:14px">🔥</span><div class="pc-bd bd-s" style="margin-top:7px">Coming soon</div></div>
+        <div class="pc"><span class="pfi" style="margin-top:14px">🔥</span><div class="pc-bd bd-s" style="margin-top:7px">Coming soon</div></div>
+      </div>
+    </div>
+
+    <div class="card glow-swap">
+      <div class="ct">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+        TOP VOLUME SWAPPER
+      </div>
+      <div class="sgrid">
+        <div class="sc"><div class="rk r1">🥇</div><div class="sav">CD</div><div class="snm">yuna hah</div><div class="spr"><div class="stk" style="background:#9945ff;color:#fff">S</div><span style="color:var(--cy)">⇄</span><div class="stk" style="background:#f97316;color:#fff">N</div>SOL/NEOX</div></div>
+        <div class="sc"><div class="rk r2">🥈</div><div class="sav">CD</div><div class="snm">yuna hah</div><div class="spr"><div class="stk" style="background:#9945ff;color:#fff">S</div><span style="color:var(--cy)">⇄</span><div class="stk" style="background:#f97316;color:#fff">N</div></div></div>
+        <div class="sc"><div class="rk r3">🥉</div><div class="sav">CD</div><div class="snm">yuna hah</div><div class="spr"><div class="stk" style="background:#9945ff;color:#fff">S</div><span style="color:var(--cy)">⇄</span><div class="stk" style="background:#f97316;color:#fff">N</div></div></div>
+        <div class="sc"><div class="rk r4">4</div><div class="sav">CD</div><div class="snm">yuna hah</div><div class="spr"><div class="stk" style="background:#9945ff;color:#fff">S</div><span style="color:var(--cy)">⇄</span><div class="stk" style="background:#f97316;color:#fff">N</div></div></div>
+      </div>
+    </div>
+
+  </div><!-- /row2 -->
+
+  <!-- BURN ACTIVITY -->
+  <div class="card glow-burn-activity">
+    <div class="ah"><div class="ct" style="margin-bottom:0">🔥 BURN ACTIVITY</div><div class="lv"><span class="ld"></span>Live</div></div>
+    <div class="agr">
+      <div class="ai"><div class="ado do"></div><div class="au">Burn by User02 <span>0x81…6134</span></div><span style="font-size:11px;flex-shrink:0">🔥</span><span class="at">12:03:42</span><span class="aa ao">16,337.25 BTC</span></div>
+      <div class="ai"><div class="ado do"></div><div class="au">Burn by User02 <span>0x81…6134</span></div><span style="font-size:11px;flex-shrink:0">🔥</span><span class="at">12:03:42</span><span class="aa ao">16,337.25 BTC</span></div>
+      <div class="ai"><div class="ado do"></div><div class="au">Burn by User02 <span>0x81…6134</span></div><span style="font-size:11px;flex-shrink:0">🔥</span><span class="at">12:03:42</span><span class="aa ao">16,337.25 BTC</span></div>
+      <div class="ai"><div class="ado do"></div><div class="au">Burn by User02 <span>0x81…6134</span></div><span style="font-size:11px;flex-shrink:0">🔥</span><span class="at">12:03:42</span><span class="aa ao">16,337.25 BTC</span></div>
+    </div>
+  </div>
+
+  <!-- SWAP ACTIVITY -->
+  <div class="card glow-blue">
+    <div class="ah">
+      <div class="ct" style="margin-bottom:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg> SWAP ACTIVITY</div>
+      <div class="lv"><span class="ld"></span>Live</div>
+    </div>
+    <div class="agr">
+      <div class="ai"><div class="ado db"></div><div class="au">yuna hah Pool <span>AB</span></div><div class="ci cb">₿</div><span style="color:var(--cy);font-size:9px">⇄</span><div class="ci cu">T</div><span class="at" style="margin-left:3px">BTC→USDT</span><span class="aa ac">0.42→27,310</span></div>
+      <div class="ai"><div class="ado db"></div><div class="au">yuna hah Pool <span>AB</span></div><div class="ci cb">₿</div><span style="color:var(--cy);font-size:9px">⇄</span><div class="ci cu">T</div><span class="at" style="margin-left:3px">BTC→USDT</span><span class="aa ac">0.42→27,310</span></div>
+      <div class="ai"><div class="ado db"></div><div class="au">yuna hah Pool <span>AB</span></div><div class="ci cb">₿</div><span style="color:var(--cy);font-size:9px">⇄</span><div class="ci cu">T</div><span class="at" style="margin-left:3px">BTC→USDT</span><span class="aa ac">0.42→27,310</span></div>
+      <div class="ai"><div class="ado db"></div><div class="au">yuna hah Pool <span>AB</span></div><div class="ci cb">₿</div><span style="color:var(--cy);font-size:9px">⇄</span><div class="ci cu">T</div><span class="at" style="margin-left:3px">BTC→USDT</span><span class="aa ac">0.42→27,310</span></div>
+    </div>
+  </div>
+
+  <!-- TOP PAIRS -->
+  <div class="card glow-blue">
+    <div class="ct" style="margin-bottom:12px">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+      TOP PAIRS <span style="font-family:'Rajdhani',sans-serif;font-size:12px;color:var(--t3);font-weight:400;letter-spacing:0;text-transform:none">Top Trading pairs</span>
+    </div>
+    <div class="prs">
+      <div class="pr">
+        <div class="pc2"><div class="pii"><div class="pi1" style="background:linear-gradient(135deg,#627eea,#3b82f6)">Ξ</div><div class="pi2" style="background:linear-gradient(135deg,#f97316,#ea580c)">N</div></div><div class="pinf"><div class="pnm">ETH/NEOX <span class="pup">↑</span></div><div class="ppr">$0.005S · 0.85%</div></div><button class="btn-tr">TRADE NOW</button></div>
+        <div class="pc2"><div class="pii"><div class="pi1" style="background:linear-gradient(135deg,#f3ba2f,#e8a917)">B</div><div class="pi2" style="background:linear-gradient(135deg,#f97316,#ea580c)">N</div></div><div class="pinf"><div class="pnm">BNB/NEOX <span class="pup">↑</span></div><div class="ppr">$1.787S · 0.95%</div></div><button class="btn-tr">TRADE NOW</button></div>
+        <div class="pc2"><div class="pii"><div class="pi1" style="background:linear-gradient(135deg,#26a17b,#1a8c69)">T</div><div class="pi2" style="background:linear-gradient(135deg,#627eea,#3b82f6)">Ξ</div></div><div class="pinf"><div class="pnm">USDT/ETH <span class="pup">↑</span></div><div class="ppr">30.057S · 0.99%</div></div><button class="btn-tr">TRADE NOW</button></div>
+      </div>
+      <div class="pr">
+        <div class="pc2"><div class="pii"><div class="pi1" style="background:linear-gradient(135deg,#627eea,#3b82f6)">Ξ</div><div class="pi2" style="background:linear-gradient(135deg,#f97316,#ea580c)">N</div></div><div class="pinf"><div class="pnm">ETH/NEOX <span class="pup">↑</span></div><div class="ppr">$0.005S · 0.85%</div></div><button class="btn-tr">TRADE NOW</button></div>
+        <div class="pc2"><div class="pii"><div class="pi1" style="background:linear-gradient(135deg,#f3ba2f,#e8a917)">B</div><div class="pi2" style="background:linear-gradient(135deg,#f97316,#ea580c)">N</div></div><div class="pinf"><div class="pnm">BNB/NEOX <span class="pup">↑</span></div><div class="ppr">$1.787S · 0.95%</div></div><button class="btn-tr">TRADE NOW</button></div>
+        <div class="pc2"><div class="pii"><div class="pi1" style="background:linear-gradient(135deg,#26a17b,#1a8c69)">T</div><div class="pi2" style="background:linear-gradient(135deg,#627eea,#3b82f6)">Ξ</div></div><div class="pinf"><div class="pnm">USDT/ETH <span class="pup">↑</span></div><div class="ppr">30.057S · 0.99%</div></div><button class="btn-tr">TRADE NOW</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOKENS BAR -->
+  <div class="tkbar">
+    <div class="tlic">⟠</div>
+    <div class="tltx">TOKENS<br>LIST</div>
+    <button class="tna">‹</button>
+    <div class="tkls">
+      <div class="tch" style="background:linear-gradient(135deg,#0e76a8,#1a9fd4)">D</div>
+      <div class="tch" style="background:linear-gradient(135deg,#627eea,#3b82f6)">Ξ</div>
+      <div class="tch" style="background:linear-gradient(135deg,#26a17b,#1a8c69)">T</div>
+      <div class="tch" style="background:linear-gradient(135deg,#ff6600,#cc5500)">N</div>
+      <div class="tch" style="background:linear-gradient(135deg,#f7931a,#e88a12)">₿</div>
+      <div class="tch" style="background:linear-gradient(135deg,#9945ff,#7c3aed)">S</div>
+      <div class="tch" style="background:linear-gradient(135deg,#00ffbd,#00c896);color:#000">X</div>
+      <div class="tch" style="background:linear-gradient(135deg,#f7931a,#e88a12)">₿</div>
+      <div class="tch" style="background:linear-gradient(135deg,#26a17b,#1a8c69)">T</div>
+      <div class="tch" style="background:linear-gradient(135deg,#e91e8c,#c2185b)">🐸</div>
+      <div class="tch" style="background:linear-gradient(135deg,#f97316,#ea580c)">U</div>
+      <div class="tch" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">A</div>
+      <div class="tch" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">◎</div>
+    </div>
+    <button class="tna">›</button>
+  </div>
+
+  <!-- TOTAL TXN -->
+  <div class="card glow-blue">
+    <div class="ct" style="margin-bottom:12px">TOTAL TRANSACTIONS</div>
+    <div class="txwrap">
+      <table class="txn">
+        <thead><tr><th>Tx Hash</th><th>Block</th><th>Age</th><th>From</th><th>To</th><th>Method</th><th>–</th><th style="text-align:right">Value</th><th style="text-align:right">Fee</th></tr></thead>
+        <tbody>
+          <tr><td class="xh">0x4b1a…37e5e6</td><td class="xt">31576595</td><td class="xt">18d 7h 42m ago</td><td class="xt">0x6803…E402f5</td><td class="xt">0x1C6D…a3C56B</td><td class="xy">Dynamic Transaction Fee</td><td class="xt">–</td><td class="xv">4,650.000000</td><td class="xf">0.000567</td></tr>
+          <tr><td class="xh">0xcb42…57ba71</td><td class="xt">31455207</td><td class="xt">19d 17h 25m ago</td><td class="xt">0x22FB…359992</td><td class="xt">0x1C6D…a3C56B</td><td class="xy">Dynamic Transaction Fee</td><td class="xt">–</td><td class="xv">2,919.998299</td><td class="xf">0.000567</td></tr>
+          <tr><td class="xh">0x1ada…7cc023</td><td class="xt">25617232</td><td class="xt">87d 7h 59m ago</td><td class="xt">0x1C6D…a3C56B</td><td class="xt">0xb02a…31Da83</td><td class="xy">Dynamic Transaction Fee</td><td class="xt">–</td><td class="xv">30,000.000000</td><td class="xf">0.000567</td></tr>
+          <tr><td class="xh">0x1d14…166673</td><td class="xt">25532431</td><td class="xt">88d 7h 32m ago</td><td class="xt">0x1C6D…a3C56B</td><td class="xt">0x12f9…fe29A5</td><td class="xy">Dynamic Transaction Fee</td><td class="xt">–</td><td class="xv">57,390.000000</td><td class="xf">0.000567</td></tr>
+          <tr><td class="xh">0x883b…e7952c</td><td class="xt">20105200</td><td class="xt">151d 3h 53m ago</td><td class="xt">0x1C6D…a3C56B</td><td class="xt">0x9874…5b41bE</td><td class="xy">Dynamic Transaction Fee</td><td class="xt">–</td><td class="xv">5,000,000.000000</td><td class="xf">0.000567</td></tr>
+          <tr><td class="xh">0xe20b…0b6731</td><td class="xt">20052022</td><td class="xt">18h 40m ago</td><td class="xt">0x59Fb…909E46</td><td class="xt">0x1C6D…a3C56B</td><td class="xy">Dynamic Transaction Fee</td><td class="xt">–</td><td class="xv">1,999.999433</td><td class="xf">0.000567</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>
