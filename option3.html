@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>FAIYA Dashboard — Option 3: Neo-Noir</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080c;
+  --bg1:#0b0d14;
+  --surface:#0f1219;
+  --surface2:#141820;
+  --surface3:#191e28;
+  
+  /* Neo-Noir palette: amber primary, teal secondary, keep orange/fire */
+  --amber:#f59e0b;
+  --amber-dim:rgba(245,158,11,.1);
+  --amber-border:rgba(245,158,11,.2);
+  --teal:#2dd4bf;
+  --teal-dim:rgba(45,212,191,.08);
+  --teal-border:rgba(45,212,191,.18);
+  --fire:#f97316;          /* keep fire orange */
+  --fire-dim:rgba(249,115,22,.1);
+  --up:#34d399;
+  --down:#f87171;
+  --border:#1a1f2e;
+  --border2:#242b3d;
+
+  --text1:#e8eaf0;
+  --text2:#8896b3;
+  --text3:#4e5a74;
+  --mono:#a0aec0;
+}
+
+html,body{min-height:100vh;background:var(--bg);color:var(--text1);font-family:'Barlow',sans-serif;font-size:14px;overflow-x:hidden}
+
+/* GRID BACKGROUND */
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-image:linear-gradient(rgba(245,158,11,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+main,nav,.ticker-wrap{position:relative;z-index:1}
+
+/* TICKER */
+.ticker-wrap{background:var(--surface);border-bottom:1px solid var(--border2);padding:7px 0;overflow:hidden}
+.ticker-track{display:flex;white-space:nowrap;animation:tick 28s linear infinite}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:inline-flex;align-items:center;gap:10px;padding:0 28px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);border-right:1px solid var(--border)}
+.ti-fire{color:var(--fire);font-size:13px}
+.ti-v{color:var(--amber);font-weight:600}
+.ti-s{color:var(--teal)}
+.ti-label{color:var(--text3);font-size:10px;letter-spacing:.5px;text-transform:uppercase}
+
+/* NAV */
+nav{background:var(--surface);border-bottom:1px solid var(--border2);padding:0 28px;display:flex;align-items:center;height:54px;position:sticky;top:0;z-index:100}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;letter-spacing:2px;color:var(--text1);margin-right:48px;text-transform:uppercase}
+.nav-logo .accent{color:var(--amber)}
+.nav-logo .tag{font-size:10px;font-weight:400;color:var(--text3);letter-spacing:3px;display:block;margin-top:-2px;font-family:'IBM Plex Mono',monospace}
+.nav-links{display:flex;height:100%}
+.nav-link{display:flex;align-items:center;padding:0 18px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.nav-link:hover{color:var(--text1)}
+.nav-link.active{color:var(--amber);border-bottom-color:var(--amber)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.user-chip{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);padding:5px 12px 5px 5px;clip-path:polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)}
+.user-av{width:28px;height:28px;background:linear-gradient(135deg,var(--amber),var(--fire));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000}
+.user-name{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:.5px;line-height:1.2}
+.user-addr{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)}
+.btn-wallet{background:transparent;border:1px solid var(--amber);color:var(--amber);padding:8px 18px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;clip-path:polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);transition:all .2s}
+.btn-wallet:hover{background:var(--amber);color:#000}
+
+/* LAYOUT */
+main{padding:18px 22px;max-width:1920px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border2);padding:16px 18px;position:relative}
+/* Corner accents */
+.card::before,.card::after{content:'';position:absolute;width:10px;height:10px}
+.card::before{top:-1px;left:-1px;border-top:2px solid var(--amber);border-left:2px solid var(--amber)}
+.card::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--amber);border-right:2px solid var(--amber)}
+
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ct-line{width:20px;height:1px;background:var(--amber)}
+
+/* GRIDS */
+.g4{display:grid;grid-template-columns:190px 1fr 1fr 265px;gap:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g2h{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* BIG NUMBERS */
+.big-num{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.5px;line-height:1}
+.big-num.amber{color:var(--amber)}
+.big-num.teal{color:var(--teal)}
+.stat-desc{font-size:11px;color:var(--text3);margin:4px 0 12px;font-family:'IBM Plex Mono',monospace;letter-spacing:.3px}
+
+/* STAT ROWS */
+.sr{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface2);margin-bottom:5px;border-left:2px solid transparent;position:relative}
+.sr::before{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--border)}
+.sr.a{border-left-color:var(--amber)}
+.sr.t{border-left-color:var(--teal)}
+.sr-key{font-size:12px;color:var(--text2);display:flex;flex-direction:column;gap:1px}
+.sr-key small{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace}
+.sr-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:var(--text1)}
+
+/* GAUGE */
+.gauge-area{display:flex;flex-direction:column;align-items:center;height:100%}
+.gauge-desc{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-top:6px;letter-spacing:.5px;text-align:center}
+.btn-join{margin-top:auto;width:100%;background:transparent;border:1px solid var(--amber);color:var(--amber);padding:10px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;clip-path:polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)}
+.btn-join:hover{background:var(--amber);color:#000}
+
+/* MINI CHART */
+.mini-chart{width:100%;height:48px;margin-bottom:10px}
+
+/* TOKEN SWAP WIDGET */
+.ts-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:flex;justify-content:space-between}
+.ts-row{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);padding:9px 12px;margin-bottom:4px;position:relative}
+.ts-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--amber)}
+.tok-icon{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;clip-path:polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)}
+.t-eth{background:linear-gradient(135deg,#627eea,#4f6fd1)}
+.t-neox{background:linear-gradient(135deg,#f97316,#ea580c)}
+.tok-name{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;flex:1}
+.ts-flip{color:var(--teal);font-size:14px;text-align:center;padding:4px 0;cursor:pointer}
+.ts-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-left:2px solid var(--teal);padding:9px 12px;color:var(--text1);font-family:'IBM Plex Mono',monospace;font-size:13px;margin-bottom:10px;outline:none;transition:border-color .2s}
+.ts-input:focus{border-color:var(--teal)}
+.ts-input::placeholder{color:var(--text3)}
+.btn-swap{width:100%;background:var(--teal);border:none;color:#000;padding:11px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;clip-path:polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)}
+.btn-swap:hover{opacity:.85}
+
+/* PARTNER */
+.partner-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.p-card{background:var(--surface2);border:1px solid var(--border2);padding:12px;text-align:center;position:relative}
+.p-card.live{border-color:var(--amber-border)}
+.p-card.live::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+.p-card.upcoming{border-color:var(--teal-border)}
+.p-card.upcoming::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.p-name{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.p-amount{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--amber);margin-bottom:4px}
+.p-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 8px;margin-bottom:8px;letter-spacing:.5px}
+.b-live{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid var(--amber-border)}
+.b-up{background:rgba(45,212,191,.08);color:var(--teal);border:1px solid var(--teal-border)}
+.b-soon{background:var(--surface3);color:var(--text3);border:1px solid var(--border)}
+.p-fire{font-size:32px;margin:6px 0;filter:drop-shadow(0 0 6px rgba(249,115,22,.5))}
+.btn-pjoin{width:100%;background:transparent;border:1px solid var(--amber);color:var(--amber);padding:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:6px;clip-path:polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)}
+.btn-pjoin:hover{background:var(--amber);color:#000}
+
+/* SWAPPERS */
+.swapper-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.s-card{background:var(--surface2);border:1px solid var(--border2);padding:12px;text-align:center}
+.s-rank{display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;margin-bottom:8px}
+.sr1{background:var(--amber);color:#000;clip-path:polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)}
+.sr2{background:var(--surface3);color:var(--text2);border:1px solid var(--border2)}
+.sr3{background:rgba(249,115,22,.2);color:var(--fire);border:1px solid rgba(249,115,22,.3)}
+.sr4{background:var(--surface3);color:var(--text3);border:1px solid var(--border)}
+.s-av{width:44px;height:44px;background:var(--surface3);border:1px solid var(--border2);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)}
+.s-name{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:.5px;margin-bottom:6px}
+.s-pair{display:flex;align-items:center;justify-content:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)}
+.s-tok{width:16px;height:16px;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;clip-path:polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%)}
+
+/* ACTIVITY */
+.act-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.live-ind{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--up);letter-spacing:.5px}
+.live-dot{width:6px;height:6px;background:var(--up);animation:lpulse 1.5s ease-in-out infinite}
+@keyframes lpulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.5)}50%{box-shadow:0 0 0 4px rgba(52,211,153,0)}}
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.act-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-left:2px solid transparent}
+.ai-burn{border-left-color:var(--fire)}
+.ai-swap{border-left-color:var(--teal)}
+.act-dot{width:5px;height:5px;flex-shrink:0}
+.ad-fire{background:var(--fire)}
+.ad-teal{background:var(--teal)}
+.act-user{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.act-addr{color:var(--text3)}
+.act-time{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)}
+.act-amount{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;margin-left:auto;white-space:nowrap}
+.aa-fire{color:var(--amber)}
+.aa-teal{color:var(--teal)}
+
+/* PAIRS */
+.pairs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.pair-card{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border2);padding:10px 14px;position:relative}
+.pair-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--border)}
+.pair-icons{display:flex}
+.pi1,.pi2{width:26px;height:26px;clip-path:polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.pi2{margin-left:-6px}
+.pair-info{flex:1}
+.pair-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.pair-up{color:var(--up);font-size:11px;font-family:'IBM Plex Mono',monospace}
+.pair-price{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)}
+.btn-trade{background:transparent;border:1px solid var(--teal);color:var(--teal);padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap;clip-path:polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)}
+.btn-trade:hover{background:var(--teal);color:#000}
+
+/* TOKENS BAR */
+.tokens-bar{background:var(--surface);border:1px solid var(--border2);padding:11px 16px;display:flex;align-items:center;gap:14px;position:relative}
+.tokens-bar::before,.tokens-bar::after{content:'';position:absolute;width:8px;height:8px}
+.tokens-bar::before{top:-1px;left:-1px;border-top:2px solid var(--teal);border-left:2px solid var(--teal)}
+.tokens-bar::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--teal);border-right:2px solid var(--teal)}
+.tl{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tl-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--amber),var(--fire));clip-path:polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);display:flex;align-items:center;justify-content:center;font-size:13px;color:#000;font-weight:700}
+.tl-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);line-height:1.3}
+.tok-scroll{display:flex;gap:7px;flex:1;overflow:hidden;align-items:center}
+.t-chip{width:32px;height:32px;clip-path:polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;transition:all .2s;flex-shrink:0;border:1px solid var(--border2)}
+.t-chip:hover{transform:scale(1.08)}
+.t-nav-btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;cursor:pointer;font-size:14px;transition:all .2s;flex-shrink:0}
+.t-nav-btn:hover{color:var(--amber);border-color:var(--amber-border)}
+
+/* TXN TABLE */
+.txn-table{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:10px}
+.txn-table th{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:7px 10px;text-align:left;border-bottom:1px solid var(--border2)}
+.txn-table td{padding:7px 10px;border-bottom:1px solid rgba(26,31,46,.8)}
+.txn-table tr:hover td{background:rgba(245,158,11,.03)}
+.txn-hash{color:var(--teal);cursor:pointer}
+.txn-hash:hover{color:var(--amber)}
+.txn-time,.txn-addr{color:var(--text3)}
+.txn-type{color:var(--text2)}
+.txn-val{color:var(--text1);text-align:right;font-weight:500}
+.txn-fee{color:var(--text3);text-align:right}
+.txn-sep{color:var(--text3)}
+
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2)}
+
+/* ═══ INNER GLOW — Neo-Noir palette ═══ */
+/* Burn = amber/fire, Swap = teal */
+.ig-burn {
+  border-color: rgba(245,158,11,.45) !important;
+  box-shadow:
+    inset 0 0 60px rgba(160,90,0,.35),
+    inset 0 0 20px rgba(245,158,11,.22);
+}
+.ig-burn-strong {
+  border-color: rgba(245,158,11,.6) !important;
+  box-shadow:
+    inset 0 0 80px rgba(160,90,0,.45),
+    inset 0 0 28px rgba(245,158,11,.30),
+    inset 0 0  8px rgba(249,115,22,.18);
+  animation: igA 3s ease-in-out infinite;
+}
+@keyframes igA {
+  0%,100% { box-shadow: inset 0 0 60px rgba(160,90,0,.32), inset 0 0 20px rgba(245,158,11,.22); }
+  50%      { box-shadow: inset 0 0 90px rgba(180,100,0,.52), inset 0 0 32px rgba(245,158,11,.40), inset 0 0 10px rgba(249,115,22,.22); }
+}
+.ig-swap {
+  border-color: rgba(45,212,191,.35) !important;
+  box-shadow:
+    inset 0 0 55px rgba(0,100,90,.28),
+    inset 0 0 18px rgba(45,212,191,.18);
+}
+.ig-accent {
+  border-color: rgba(245,158,11,.3) !important;
+  box-shadow:
+    inset 0 0 50px rgba(120,80,0,.22),
+    inset 0 0 15px rgba(245,158,11,.15);
+}
+/* Partner live cards */
+.p-card.live {
+  border-color: rgba(245,158,11,.65) !important;
+  box-shadow: inset 0 0 30px rgba(160,90,0,.48), inset 0 0 10px rgba(245,158,11,.32);
+  animation: pcA 2.5s ease-in-out infinite;
+}
+@keyframes pcA {
+  0%,100% { box-shadow: inset 0 0 22px rgba(160,90,0,.35), inset 0 0 8px rgba(245,158,11,.25); }
+  50%      { box-shadow: inset 0 0 42px rgba(180,100,0,.58), inset 0 0 14px rgba(245,158,11,.46); }
+}
+.p-card.upcoming {
+  border-color: rgba(45,212,191,.4) !important;
+  box-shadow: inset 0 0 24px rgba(0,90,80,.30), inset 0 0 8px rgba(45,212,191,.20);
+}
+/* Text glow */
+.big-num.amber { text-shadow: 0 0 16px rgba(245,158,11,.80), 0 0 32px rgba(245,158,11,.40); }
+.big-num.teal  { text-shadow: 0 0 16px rgba(45,212,191,.80), 0 0 32px rgba(45,212,191,.40); }
+/* Buttons */
+.btn-join  { box-shadow: 0 0 14px rgba(245,158,11,.40), inset 0 1px 0 rgba(255,255,255,.12); }
+.btn-join:hover  { box-shadow: 0 0 28px rgba(245,158,11,.72); }
+.btn-swap  { box-shadow: 0 0 14px rgba(45,212,191,.40), inset 0 1px 0 rgba(255,255,255,.10); }
+.btn-swap:hover  { box-shadow: 0 0 28px rgba(45,212,191,.72); }
+.btn-trade:hover { box-shadow: 0 0 14px rgba(45,212,191,.55); }
+.btn-wallet:hover{ box-shadow: 0 0 16px rgba(245,158,11,.45); }
+/* Live dot */
+.live-dot { box-shadow: 0 0 7px rgba(52,211,153,.9); }
+/* Fire */
+.p-fire { filter: drop-shadow(0 0 7px rgba(249,115,22,.85)) drop-shadow(0 0 16px rgba(245,158,11,.5)); }
+.p-fire[style*="opacity"] { filter: none; }
+/* Rank gold */
+.s-rank.sr1 { box-shadow: 0 0 10px rgba(245,158,11,.75); }
+/* User avatar */
+.user-av { box-shadow: 0 0 10px rgba(245,158,11,.5); }
+/* Token chips */
+.t-chip:hover { box-shadow: 0 0 12px rgba(255,255,255,.22); }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <div class="ticker-item"><span class="ti-fire">▲</span> <span class="ti-label">BURN</span> <span class="ti-v">1,250 FAIYA</span></div>
+    <div class="ticker-item"><span class="ti-s">⇄</span> <span class="ti-label">SWAP</span> <span class="ti-s">3.5 ETH → 17,800 FAIYA</span></div>
+    <div class="ticker-item"><span class="ti-label">VOL 24H</span> <span class="ti-v">$420,300</span></div>
+    <div class="ticker-item"><span class="ti-fire">▲</span> <span class="ti-label">BURN</span> <span class="ti-v">800 FAIYA</span></div>
+    <div class="ticker-item"><span class="ti-s">⇄</span> <span class="ti-label">SWAP</span> <span class="ti-s">1.2 BTC → 42,100 NEOX</span></div>
+    <div class="ticker-item"><span class="ti-label">TOP POOL</span> <span class="ti-v">ETH/NEOX $2.1M</span></div>
+    <div class="ticker-item"><span class="ti-fire">▲</span> <span class="ti-label">BURN</span> <span class="ti-v">1,250 FAIYA</span></div>
+    <div class="ticker-item"><span class="ti-s">⇄</span> <span class="ti-label">SWAP</span> <span class="ti-s">3.5 ETH → 17,800 FAIYA</span></div>
+    <div class="ticker-item"><span class="ti-label">VOL 24H</span> <span class="ti-v">$420,300</span></div>
+    <div class="ticker-item"><span class="ti-fire">▲</span> <span class="ti-label">BURN</span> <span class="ti-v">800 FAIYA</span></div>
+    <div class="ticker-item"><span class="ti-s">⇄</span> <span class="ti-label">SWAP</span> <span class="ti-s">1.2 BTC → 42,100 NEOX</span></div>
+    <div class="ticker-item"><span class="ti-label">TOP POOL</span> <span class="ti-v">ETH/NEOX $2.1M</span></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">FA<span class="accent">I</span>YA<span class="tag">DeFi Protocol v2</span></div>
+  <div class="nav-links">
+    <div class="nav-link active">Dashboard</div>
+    <div class="nav-link">Pairs</div>
+    <div class="nav-link">Burn</div>
+    <div class="nav-link">Swap</div>
+  </div>
+  <div class="nav-right">
+    <div class="user-chip">
+      <div class="user-av">U1</div>
+      <div>
+        <div class="user-name">User001</div>
+        <div class="user-addr">0x1a2…3c</div>
+      </div>
+    </div>
+    <button class="btn-wallet">Connect Wallet</button>
+  </div>
+</nav>
+
+<main>
+  <!-- ROW 1: 4 col -->
+  <div class="g4">
+    <!-- Burn Tracker -->
+    <div class="card ig-burn-strong" style="display:flex;flex-direction:column">
+      <div class="card-title"><span class="ct-line"></span>Burn Tracker</div>
+      <div class="gauge-area">
+        <svg viewBox="0 0 150 92" style="width:150px;height:92px">
+          <path d="M15 82 A60 60 0 0 1 135 82" fill="none" stroke="#141820" stroke-width="11" stroke-linecap="round"/>
+          <path d="M15 82 A60 60 0 0 1 135 82" fill="none" stroke="url(#ag)" stroke-width="11" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="50"/>
+          <defs>
+            <linearGradient id="ag" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#78350f"/>
+              <stop offset="60%" stop-color="#f59e0b"/>
+              <stop offset="100%" stop-color="#f97316"/>
+            </linearGradient>
+          </defs>
+          <line x1="75" y1="80" x2="114" y2="42" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="75" cy="80" r="4" fill="#f59e0b"/>
+          <line x1="62" y1="74" x2="66" y2="78" stroke="#4e5a74" stroke-width="1"/>
+          <line x1="75" y1="22" x2="75" y2="27" stroke="#4e5a74" stroke-width="1"/>
+          <line x1="88" y1="74" x2="84" y2="78" stroke="#4e5a74" stroke-width="1"/>
+          <text x="8" y="90" fill="#4e5a74" font-size="8" font-family="monospace">0</text>
+          <text x="66" y="16" fill="#4e5a74" font-size="8" font-family="monospace">50</text>
+          <text x="128" y="90" fill="#4e5a74" font-size="8" font-family="monospace">100</text>
+        </svg>
+        <div class="gauge-desc">BURN_RATE_MONITOR</div>
+      </div>
+      <button class="btn-join" style="margin-top:16px">[ JOIN POOL ]</button>
+    </div>
+
+    <!-- Burn Stats -->
+    <div class="card ig-burn">
+      <div class="card-title"><span class="ct-line"></span>Burn Protocol</div>
+      <div class="big-num amber">5,678,901 NEOX</div>
+      <div class="stat-desc">// tokens_permanently_removed_from_supply</div>
+      <div class="sr a">
+        <div class="sr-key">Total Transactions<small>completed_burns</small></div>
+        <div class="sr-val">1,921</div>
+      </div>
+      <div class="sr a">
+        <div class="sr-key">Total Pools<small>participants</small></div>
+        <div class="sr-val">42</div>
+      </div>
+      <div class="sr a">
+        <div class="sr-key">Burn Volume<small>usd_equivalent</small></div>
+        <div class="sr-val" style="color:var(--amber)">$2,145,678</div>
+      </div>
+    </div>
+
+    <!-- Swap Stats -->
+    <div class="card ig-swap">
+      <div class="card-title"><span class="ct-line" style="background:var(--teal)"></span>Swap Protocol</div>
+      <div class="big-num teal">$12,345,678</div>
+      <div class="stat-desc">// total_swap_volume / all_pools</div>
+      <svg class="mini-chart" viewBox="0 0 260 48" preserveAspectRatio="none">
+        <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2dd4bf" stop-opacity=".2"/><stop offset="100%" stop-color="#2dd4bf" stop-opacity="0"/></linearGradient></defs>
+        <path d="M0 44 L40 34 L80 28 L120 16 L160 20 L200 8 L260 3" fill="none" stroke="#2dd4bf" stroke-width="1.5"/>
+        <path d="M0 44 L40 34 L80 28 L120 16 L160 20 L200 8 L260 3 L260 48 L0 48Z" fill="url(#tg)"/>
+        <circle cx="260" cy="3" r="3" fill="#2dd4bf"/>
+      </svg>
+      <div class="sr t">
+        <div class="sr-key">Total Transactions<small>all_pools</small></div>
+        <div class="sr-val">8,420</div>
+      </div>
+      <div class="sr t">
+        <div class="sr-key">Active Pools<small>active_traders</small></div>
+        <div class="sr-val">36</div>
+      </div>
+      <div class="sr t">
+        <div class="sr-key">Swap Fees<small>collected</small></div>
+        <div class="sr-val" style="color:var(--teal)">$12,450</div>
+      </div>
+    </div>
+
+    <!-- Token Swap -->
+    <div class="card ig-accent">
+      <div class="card-title"><span class="ct-line" style="background:var(--teal)"></span>Token Swap</div>
+      <div class="ts-label">From <span style="cursor:pointer">CONFIG ⚙</span></div>
+      <div class="ts-row">
+        <div class="tok-icon t-eth">Ξ</div>
+        <div class="tok-name">ETH</div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">× NEOX</span>
+      </div>
+      <div class="ts-flip">⇅ flip</div>
+      <div class="ts-label">Amount</div>
+      <input class="ts-input" type="text" placeholder="enter_amount_neox">
+      <button class="btn-swap">[ EXECUTE SWAP ]</button>
+    </div>
+  </div>
+
+  <!-- ROW 2 -->
+  <div class="g2">
+    <!-- Partner Burn -->
+    <div class="card ig-burn">
+      <div class="card-title"><span class="ct-line"></span>Partner Burn</div>
+      <div class="partner-grid">
+        <div class="p-card live">
+          <div class="p-name" style="color:var(--amber)">YUNANa</div>
+          <div class="p-amount">1,250,000</div>
+          <div class="p-badge b-live">LIVE · #482514</div>
+          <div class="p-fire">🔥</div>
+          <button class="btn-pjoin">[ JOIN ]</button>
+        </div>
+        <div class="p-card upcoming">
+          <div class="p-name" style="color:var(--teal)">HAHA</div>
+          <div class="p-amount" style="color:var(--teal);font-size:14px">UPCOMING</div>
+          <div class="p-badge b-up">IN 3 DAYS</div>
+          <div class="p-fire" style="opacity:.4">🔥</div>
+        </div>
+        <div class="p-card">
+          <div class="p-fire" style="margin-top:16px;opacity:.2">🔥</div>
+          <div class="p-badge b-soon" style="margin-top:8px">COMING SOON</div>
+        </div>
+        <div class="p-card">
+          <div class="p-fire" style="margin-top:16px;opacity:.2">🔥</div>
+          <div class="p-badge b-soon" style="margin-top:8px">COMING SOON</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Volume Swapper -->
+    <div class="card ig-swap">
+      <div class="card-title"><span class="ct-line" style="background:var(--teal)"></span>Top Volume Swapper</div>
+      <div class="swapper-grid">
+        <div class="s-card">
+          <div class="s-rank sr1">#1</div>
+          <div class="s-av">CD</div>
+          <div class="s-name">yuna hah</div>
+          <div class="s-pair">
+            <div class="s-tok" style="background:#9945ff">S</div>
+            <span style="color:var(--teal)">⇄</span>
+            <div class="s-tok" style="background:var(--fire)">N</div>
+            <span style="margin-left:4px;color:var(--text3)">SOL/NEOX</span>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-rank sr2">#2</div>
+          <div class="s-av">CD</div>
+          <div class="s-name">yuna hah</div>
+          <div class="s-pair">
+            <div class="s-tok" style="background:#9945ff">S</div>
+            <span style="color:var(--teal)">⇄</span>
+            <div class="s-tok" style="background:var(--fire)">N</div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-rank sr3">#3</div>
+          <div class="s-av">CD</div>
+          <div class="s-name">yuna hah</div>
+          <div class="s-pair">
+            <div class="s-tok" style="background:#9945ff">S</div>
+            <span style="color:var(--teal)">⇄</span>
+            <div class="s-tok" style="background:var(--fire)">N</div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-rank sr4">#4</div>
+          <div class="s-av">CD</div>
+          <div class="s-name">yuna hah</div>
+          <div class="s-pair">
+            <div class="s-tok" style="background:#9945ff">S</div>
+            <span style="color:var(--teal)">⇄</span>
+            <div class="s-tok" style="background:var(--fire)">N</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BURN ACTIVITY -->
+  <div class="card ig-burn">
+    <div class="act-header">
+      <div class="card-title" style="margin-bottom:0"><span class="ct-line"></span>Burn Activity</div>
+      <div class="live-ind"><span class="live-dot"></span>LIVE_FEED</div>
+    </div>
+    <div class="act-grid">
+      <div class="act-item ai-burn">
+        <div class="act-dot ad-fire"></div>
+        <div class="act-user">burn_by_User02 <span class="act-addr">0x81…6134</span></div>
+        <div class="act-time">12:03:42</div>
+        <div class="act-amount aa-fire">16,337.25 BTC</div>
+      </div>
+      <div class="act-item ai-burn">
+        <div class="act-dot ad-fire"></div>
+        <div class="act-user">burn_by_User02 <span class="act-addr">0x81…6134</span></div>
+        <div class="act-time">12:03:42</div>
+        <div class="act-amount aa-fire">16,337.25 BTC</div>
+      </div>
+      <div class="act-item ai-burn">
+        <div class="act-dot ad-fire"></div>
+        <div class="act-user">burn_by_User02 <span class="act-addr">0x81…6134</span></div>
+        <div class="act-time">12:03:42</div>
+        <div class="act-amount aa-fire">16,337.25 BTC</div>
+      </div>
+      <div class="act-item ai-burn">
+        <div class="act-dot ad-fire"></div>
+        <div class="act-user">burn_by_User02 <span class="act-addr">0x81…6134</span></div>
+        <div class="act-time">12:03:42</div>
+        <div class="act-amount aa-fire">16,337.25 BTC</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SWAP ACTIVITY -->
+  <div class="card ig-swap">
+    <div class="act-header">
+      <div class="card-title" style="margin-bottom:0"><span class="ct-line" style="background:var(--teal)"></span>Swap Activity</div>
+      <div class="live-ind"><span class="live-dot"></span>LIVE_FEED</div>
+    </div>
+    <div class="act-grid">
+      <div class="act-item ai-swap">
+        <div class="act-dot ad-teal"></div>
+        <div class="act-user">yuna_hah_pool <span class="act-addr">AB</span></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">BTC⇄USDT</span>
+        <div class="act-amount aa-teal">0.42 → 27,310</div>
+      </div>
+      <div class="act-item ai-swap">
+        <div class="act-dot ad-teal"></div>
+        <div class="act-user">yuna_hah_pool <span class="act-addr">AB</span></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">BTC⇄USDT</span>
+        <div class="act-amount aa-teal">0.42 → 27,310</div>
+      </div>
+      <div class="act-item ai-swap">
+        <div class="act-dot ad-teal"></div>
+        <div class="act-user">yuna_hah_pool <span class="act-addr">AB</span></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">BTC⇄USDT</span>
+        <div class="act-amount aa-teal">0.42 → 27,310</div>
+      </div>
+      <div class="act-item ai-swap">
+        <div class="act-dot ad-teal"></div>
+        <div class="act-user">yuna_hah_pool <span class="act-addr">AB</span></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">BTC⇄USDT</span>
+        <div class="act-amount aa-teal">0.42 → 27,310</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP PAIRS -->
+  <div class="card ig-swap">
+    <div class="card-title" style="margin-bottom:14px"><span class="ct-line"></span>Top Pairs <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);font-weight:400;letter-spacing:.5px;text-transform:lowercase;margin-left:6px">// top_trading_pairs</span></div>
+    <div class="pairs-grid">
+      <div class="pair-card">
+        <div class="pair-icons">
+          <div class="pi1" style="background:linear-gradient(135deg,#627eea,#4f6fd1)">Ξ</div>
+          <div class="pi2" style="background:linear-gradient(135deg,#f97316,#ea580c)">N</div>
+        </div>
+        <div class="pair-info">
+          <div class="pair-name">ETH/NEOX <span class="pair-up">↑</span></div>
+          <div class="pair-price">$0.0055 · 0.85%</div>
+        </div>
+        <button class="btn-trade">TRADE</button>
+      </div>
+      <div class="pair-card">
+        <div class="pair-icons">
+          <div class="pi1" style="background:linear-gradient(135deg,#f3ba2f,#e8a917)">B</div>
+          <div class="pi2" style="background:linear-gradient(135deg,#f97316,#ea580c)">N</div>
+        </div>
+        <div class="pair-info">
+          <div class="pair-name">BNB/NEOX <span class="pair-up">↑</span></div>
+          <div class="pair-price">$1.7875 · 0.95%</div>
+        </div>
+        <button class="btn-trade">TRADE</button>
+      </div>
+      <div class="pair-card">
+        <div class="pair-icons">
+          <div class="pi1" style="background:linear-gradient(135deg,#26a17b,#1a8c69)">T</div>
+          <div class="pi2" style="background:linear-gradient(135deg,#627eea,#4f6fd1)">Ξ</div>
+        </div>
+        <div class="pair-info">
+          <div class="pair-name">USDT/ETH <span class="pair-up">↑</span></div>
+          <div class="pair-price">30.0577 · 0.99%</div>
+        </div>
+        <button class="btn-trade">TRADE</button>
+      </div>
+    </div>
+    <div class="pairs-grid" style="margin-bottom:0">
+      <div class="pair-card">
+        <div class="pair-icons">
+          <div class="pi1" style="background:linear-gradient(135deg,#627eea,#4f6fd1)">Ξ</div>
+          <div class="pi2" style="background:linear-gradient(135deg,#f97316,#ea580c)">N</div>
+        </div>
+        <div class="pair-info">
+          <div class="pair-name">ETH/NEOX <span class="pair-up">↑</span></div>
+          <div class="pair-price">$0.0055 · 0.85%</div>
+        </div>
+        <button class="btn-trade">TRADE</button>
+      </div>
+      <div class="pair-card">
+        <div class="pair-icons">
+          <div class="pi1" style="background:linear-gradient(135deg,#f3ba2f,#e8a917)">B</div>
+          <div class="pi2" style="background:linear-gradient(135deg,#f97316,#ea580c)">N</div>
+        </div>
+        <div class="pair-info">
+          <div class="pair-name">BNB/NEOX <span class="pair-up">↑</span></div>
+          <div class="pair-price">$1.7875 · 0.95%</div>
+        </div>
+        <button class="btn-trade">TRADE</button>
+      </div>
+      <div class="pair-card">
+        <div class="pair-icons">
+          <div class="pi1" style="background:linear-gradient(135deg,#26a17b,#1a8c69)">T</div>
+          <div class="pi2" style="background:linear-gradient(135deg,#627eea,#4f6fd1)">Ξ</div>
+        </div>
+        <div class="pair-info">
+          <div class="pair-name">USDT/ETH <span class="pair-up">↑</span></div>
+          <div class="pair-price">30.0577 · 0.99%</div>
+        </div>
+        <button class="btn-trade">TRADE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOKENS BAR -->
+  <div class="tokens-bar">
+    <div class="tl">
+      <div class="tl-icon">⟠</div>
+      <div class="tl-title">TOKENS<br>LIST</div>
+    </div>
+    <button class="t-nav-btn">‹</button>
+    <div class="tok-scroll">
+      <div class="t-chip" style="background:linear-gradient(135deg,#0e76a8,#1a9fd4)">D</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#627eea,#3b82f6)">Ξ</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#26a17b,#1a8c69)">T</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#f97316,#ea580c)">N</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#f7931a,#e88a12)">₿</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#9945ff,#7c3aed)">S</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#00ffbd,#00c896);color:#000">X</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#f7931a,#e88a12);color:#000">₿</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#26a17b,#1a8c69)">T</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#e91e8c,#c2185b)">🐸</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#f59e0b,#b45309);color:#000">U</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#2dd4bf,#0d9488);color:#000">A</div>
+      <div class="t-chip" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">◎</div>
+    </div>
+    <button class="t-nav-btn">›</button>
+  </div>
+
+  <!-- TRANSACTIONS -->
+  <div class="card ig-swap">
+    <div class="card-title" style="margin-bottom:14px"><span class="ct-line"></span>Total Transactions</div>
+    <table class="txn-table">
+      <thead><tr>
+        <th>Tx Hash</th><th>Block</th><th>Age</th><th>From</th><th>To</th><th>Method</th><th>–</th><th style="text-align:right">Value</th><th style="text-align:right">Fee</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="txn-hash">0x4b1a…37e5e6</td><td class="txn-time">31576595</td><td class="txn-time">18d 7h 42m ago</td><td class="txn-addr">0x6803…E402f5</td><td class="txn-addr">0x1C6D…a3C56B</td><td class="txn-type">Dynamic Transaction Fee</td><td class="txn-sep">–</td><td class="txn-val">4,650.000000</td><td class="txn-fee">0.000567</td></tr>
+        <tr><td class="txn-hash">0xcb42…57ba71</td><td class="txn-time">31455207</td><td class="txn-time">19d 17h 25m ago</td><td class="txn-addr">0x22FB…359992</td><td class="txn-addr">0x1C6D…a3C56B</td><td class="txn-type">Dynamic Transaction Fee</td><td class="txn-sep">–</td><td class="txn-val">2,919.998299</td><td class="txn-fee">0.000567</td></tr>
+        <tr><td class="txn-hash">0x1ada…7cc023</td><td class="txn-time">25617232</td><td class="txn-time">87d 7h 59m ago</td><td class="txn-addr">0x1C6D…a3C56B</td><td class="txn-addr">0xb02a…31Da83</td><td class="txn-type">Dynamic Transaction Fee</td><td class="txn-sep">–</td><td class="txn-val">30,000.000000</td><td class="txn-fee">0.000567</td></tr>
+        <tr><td class="txn-hash">0x1d14…166673</td><td class="txn-time">25532431</td><td class="txn-time">88d 7h 32m ago</td><td class="txn-addr">0x1C6D…a3C56B</td><td class="txn-addr">0x12f9…fe29A5</td><td class="txn-type">Dynamic Transaction Fee</td><td class="txn-sep">–</td><td class="txn-val">57,390.000000</td><td class="txn-fee">0.000567</td></tr>
+        <tr><td class="txn-hash">0x883b…e7952c</td><td class="txn-time">20105200</td><td class="txn-time">151d 3h 53m ago</td><td class="txn-addr">0x1C6D…a3C56B</td><td class="txn-addr">0x9874…5b41bE</td><td class="txn-type">Dynamic Transaction Fee</td><td class="txn-sep">–</td><td class="txn-val">5,000,000.000000</td><td class="txn-fee">0.000567</td></tr>
+        <tr><td class="txn-hash">0xe20b…0b6731</td><td class="txn-time">20052022</td><td class="txn-time">18h 40m ago</td><td class="txn-addr">0x59Fb…909E46</td><td class="txn-addr">0x1C6D…a3C56B</td><td class="txn-type">Dynamic Transaction Fee</td><td class="txn-sep">–</td><td class="txn-val">1,999.999433</td><td class="txn-fee">0.000567</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>
